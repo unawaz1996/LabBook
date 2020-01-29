@@ -1,0 +1,88 @@
+---
+title: "Neurodevelopmental gene expression signatures"
+author: "Urwah Nawaz"
+date: "15 January 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
+```
+
+
+# Aim of analysis
+
+To use a single-nucleus data from ASD cases and controls and calculate a "neurodevelopmental gene dysregulation score" for each ASD case and each control. 
+
+Each of the genes may only show a minor change and different genes may be changed in different patients, however when we look at them as a group, we might see a cumulative effect. 
+
+
+# Method 
+
+* Download data from Vekmeshev et al and create a expression matrix 
+
+* Make a list of neurodevelopmental disease genes with subcategories
+
+* For each gene 
+    + Calculate the z-score if its expression in a given individual and cell type relative to all cells from controls in the same cell-type 
+    + Box-plot these z-scores 
+    + Calculate a wilcoxon test comparing NDD genes and non-NDD genes for each individual  
+    
+    
+
+## Creating expression table 
+
+```{r}
+require(Seurat)
+library(data.table)
+library(stringr) 
+library(magrittr)
+library(dplyr)
+library(tibble)
+```
+
+
+```{r}
+mat <- fread("zcat < exprMatrix.tsv.gz")
+meta <- read.table("meta.tsv", header=T, sep="\t", as.is=T, row.names=1)
+
+
+rownames(meta) <- str_replace(rownames(meta), "-", ".")
+
+genes = mat[,1][[1]]
+genes = gsub(".+[|]", "", genes)
+mat = data.frame(mat[,-1], row.names=genes)
+so <- CreateSeuratObject(counts = mat, project = "Autism", meta.data=meta)
+```
+
+Using Seurat object is a little confusing -> will need more practice with it to be able to use it more efficiently. 
+
+## Without using Seurat object
+
+```{r}
+## get names of all individuals that are ASD 
+autism <- meta %>%
+  rownames_to_column("sample_name") %>%
+  dplyr::filter(diagnosis == "ASD") %>% 
+  column_to_rownames("sample_name")
+
+autism_ind <- unique(autism$individual)
+autism_ind
+```
+
+```{r}
+ASD_4849_oligo <- meta %>% 
+  rownames_to_column("sample_name") %>% 
+  dplyr::filter((individual == 4849 | diagnosis == "Control") & cluster == "Oligodendrocytes") %>% 
+  column_to_rownames("sample_name")
+
+
+sample_names <- rownames(ASD_4849_oligo)
+head(sample_names)
+```
+
+```{r}
+ASD_4849_oligo_mat <- dplyr::select(mat, sample_names)
+
+head(ASD_4849_oligo_mat)[1:30]
+```
