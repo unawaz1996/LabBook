@@ -1,25 +1,63 @@
-library(Seurat)
-library(magrittr)
-library(data.table)
-library(dplyr)
-library(tibble)
-library(stringr)
-library(Biobase)
-library(readxl)
-library(gdata)
-library(Matrix)
+suppressPackageStartupMessages({
+  library(magrittr)
+  library(data.table)
+  library(dplyr)
+  library(tibble)
+  library(stringr)
+  library(Biobase)
+  library(readxl)
+  library(gdata)
+  library(Matrix)
+  library(SingleCellExperiment)
+  library(scater)
+  library(readr)
+})
 
 ### loading the data 
 
 ### the data is log2 exp data 
 #setwd("Autism")
-mat <- fread("zcat < exprMatrix.tsv.gz") ## 10x UMI counts from cellranger, log2-transformed 
-meta <- read.table("meta.tsv", header=T, sep="\t", as.is=T, row.names=1)
+#mat <- fread("zcat < exprMatrix.tsv.gz") ## 10x UMI counts from cellranger, log2-transformed 
+#meta <- read.table("meta.tsv", header=T, sep="\t", as.is=T, row.names=1)
 
+#rownames(meta) <- str_replace(rownames(meta), "-", ".")
+#genes = mat[,1][[1]]
+#genes = gsub(".+[|]", "", genes)
+#mat = data.frame(mat[,-1], row.names=genes)
+
+## Loading the meta data 
+meta <- read.table("~/Documents/Data/meta.tsv", header=T, sep="\t", as.is=T, row.names=1)
 rownames(meta) <- str_replace(rownames(meta), "-", ".")
-genes = mat[,1][[1]]
-genes = gsub(".+[|]", "", genes)
-mat = data.frame(mat[,-1], row.names=genes)
+
+
+
+sn_counts <- readMM("~/Documents/Data/matrix.mtx")
+genes <- read_tsv("~/Documents/Data/genes.tsv", col_names = FALSE)
+barcodes <- read_tsv("~/Documents/Data/barcodes.tsv", col_names=FALSE)
+
+### creating single cell object 
+
+sce <- SingleCellExperiment(
+  assays=list(counts = sn_counts),
+  rowData = genes$X1 , 
+  colData = barcodes,
+  metadata = meta
+)
+
+## filtering the data 
+
+keep_feature <- rowSums(counts(sce) > 0) > 0
+sce <- sce[keep_feature, ]
+
+# normalization 
+
+cpm(sce) <- calculateCPM(sce)
+sce <- normalize(sce)
+
+assayNames(sce)
+
+## QC 
+sce <- calculateQCMetrics(sce)
 
 
 ## playing acount with single cell data and using seurat

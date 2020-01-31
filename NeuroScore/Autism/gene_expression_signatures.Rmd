@@ -9,6 +9,10 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 ```
 
+# Background 
+
+Velmeshev et al (2019) have used single-nucleus RNA-sequencing daya to identify cell type-specific changes in ASD brains.
+
 
 # Aim of analysis
 
@@ -27,8 +31,32 @@ Each of the genes may only show a minor change and different genes may be change
     + Calculate the z-score if its expression in a given individual and cell type relative to all cells from controls in the same cell-type 
     + Box-plot these z-scores 
     + Calculate a wilcoxon test comparing NDD genes and non-NDD genes for each individual  
-    
-    
+
+
+# Analysis 
+
+```{r loading data}
+sn_counts <- readMM("~/Documents/Data/matrix.mtx")
+genes <- read_tsv("~/Documents/Data/genes.tsv", col_names = FALSE)
+barcodes <- read_tsv("~/Documents/Data/barcodes.tsv", col_names=FALSE)
+
+### creating single cell object 
+
+sce <- SingleCellExperiment(
+  assays=list(counts = sn_counts),
+  rowData = genes$X1 , 
+  colData = barcodes,
+  metadata = meta
+)
+```
+
+
+```{r normalizating}
+
+cpm(sce) <- calculateCPM(sce)
+
+```
+
 
 ## Creating expression table 
 
