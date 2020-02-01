@@ -9,9 +9,40 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 ```
 
-# Background 
+# Paper summary
+The study by Velmeshev et al (2019) analysed transcriptomic changes in the brains of individuals with autism to gain insight into the molecular pathology of ASD in a cell-type specifc manner.
 
-Velmeshev et al (2019) have used single-nucleus RNA-sequencing daya to identify cell type-specific changes in ASD brains.
+The study used single-nucleus RNA-sequencing strategy on postmortem tissue samples including the prefrontal cortex and anerior cingulator cortex from 15 ASD patients and 16 controls. None of the ASD patients were diagnosed with ID. Additionally, patients that only had sporadic epilespy were also included in this analysis along with 7 age matched controls.
+
+## Characteristics of the data 
+
+* Generated 104,559 single-nuclei gene expression profiles 
+
+   * 52,556 from control subjects 
+   * 52,003 from ASD patients 
+
+* Detected a median of 1391 genes and 2213 transcripts per nucleus
+* Identified 17 cell types by using expression of known cell markers
+* Neurons expressed more genes and transcripts than glia 
+
+* highlight key results from this study
+    * what is single nucleus data 
+    * why is it better to study instead of snRNA-seq for some scenarios 
+
+
+## Differential expression results 
+
+The study aimed to identify differentially expressed genes in cell-type specific manner by comparing nuclear profiles from ASD and controls using a linear mixed model. 
+
+* Detected 692 differential expression events (q value < 0.05; expression level change > 10%) in 513 unique DEGs
+* 76% of these were differentisally expressed in a single cell type
+* Top differentially expressed genes in non-neuronal cell types were up-regulated in protoplasmic astrocytes and microglia 
+* 75 DEGs were found in the SFARI database
+* SFARI genes were most overrepresented in L2/3 and L4 excitatory neurons, followed by VIP and somatostatin expression interneurons 
+
+Gene expression was also investigated in neuronal and glial subtypes. Over all this analysis revealed dysregulated development and synaptic signaling in components of upper-layer cortical circuitry as well as changes in the cellular state of microglia and protoplasmic astrocytes 
+
+
 
 
 # Aim of analysis
@@ -34,6 +65,11 @@ Each of the genes may only show a minor change and different genes may be change
 
 
 # Analysis 
+
+## Gene lists
+
+## Exploratory analysis 
+
 
 ```{r loading data}
 sn_counts <- readMM("~/Documents/Data/matrix.mtx")
@@ -58,34 +94,7 @@ cpm(sce) <- calculateCPM(sce)
 ```
 
 
-## Creating expression table 
-
-```{r}
-require(Seurat)
-library(data.table)
-library(stringr) 
-library(magrittr)
-library(dplyr)
-library(tibble)
-```
-
-
-```{r}
-mat <- fread("zcat < exprMatrix.tsv.gz")
-meta <- read.table("meta.tsv", header=T, sep="\t", as.is=T, row.names=1)
-
-
-rownames(meta) <- str_replace(rownames(meta), "-", ".")
-
-genes = mat[,1][[1]]
-genes = gsub(".+[|]", "", genes)
-mat = data.frame(mat[,-1], row.names=genes)
-so <- CreateSeuratObject(counts = mat, project = "Autism", meta.data=meta)
-```
-
-Using Seurat object is a little confusing -> will need more practice with it to be able to use it more efficiently. 
-
-## Without using Seurat object
+## Gene expression signature analysis 
 
 ```{r}
 ## get names of all individuals that are ASD 
