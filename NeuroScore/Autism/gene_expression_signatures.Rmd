@@ -52,14 +52,16 @@ To use a single-nucleus data from ASD cases and controls and calculate a "neurod
 Each of the genes may only show a minor change and different genes may be changed in different patients, however when we look at them as a group, we might see a cumulative effect. 
 
 
-# Method 
+# Method Aims 
 
 * Download data from Vekmeshev et al and create a expression matrix 
 
 * Make a list of neurodevelopmental disease genes with subcategories
 
-* For each gene 
-    + Calculate the z-score if its expression in a given individual and cell type relative to all cells from controls in the same cell-type 
+* Load data into R and perform an exploratory analysis 
+
+* For each NDD gene 
+    + Calculate the z-score of its expression in a given individual and cell type relative to all cells from controls in the same cell-type 
     + Box-plot these z-scores 
     + Calculate a wilcoxon test comparing NDD genes and non-NDD genes for each individual  
 
@@ -68,7 +70,26 @@ Each of the genes may only show a minor change and different genes may be change
 
 ## Gene lists
 
+For this analysis, we want to investigate the expression of  NDD genes in ASD individuals compared to controls. 
+
+Checklist
+
+* List of NDD genes (make table and write function if possible)
+   * ASD genes 
+   * ID genes 
+   * Epilpsy genes 
+
 ## Exploratory analysis 
+
+ In this section, we explore several properties of the sn-RNAseq data including mean expression and variation of expression of various genes. Raw data from UCSC cell browser was downloaded and loaded into R. A SingleCellExperiment object was created and the data was filtered and normalized.
+
+ Checklist 
+
+ * Genes detected 
+ * mean expression of genes (in all transformations?)
+ * expression of NDD vs non-NDD genes in clusters 
+ * which cluster expresses the most amount of NDD genes 
+ * variance of expression 
 
 
 ```{r loading data}
@@ -95,6 +116,17 @@ cpm(sce) <- calculateCPM(sce)
 
 
 ## Gene expression signature analysis 
+
+Checklist 
+
+* write function for z-score calculation 
+   * Must subset 1 ASD individual, all controls in 1 cell type  per gene 
+   * must group (average) expression of cells per individual 
+   * transpose and calculate z-score 
+   * End must be matrix with z-score for each cluster for each gene 
+
+
+* Plot boxplot for top 10 interesting genes (per gene list)
 
 ```{r}
 ## get names of all individuals that are ASD 
