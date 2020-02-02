@@ -15,10 +15,8 @@ suppressPackageStartupMessages({
 
 library(scRNAseq)
 example_sce <- ZeiselBrainData()
-example_sce
 
-str(counts(example_sce))
-example_sce
+counts(example_sce)
 
 example_sce$whee <- sample(LETTERS, ncol(example_sce), replace=TRUE)
 colData(example_sce)

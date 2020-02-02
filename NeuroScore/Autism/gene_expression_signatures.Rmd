@@ -72,11 +72,65 @@ Each of the genes may only show a minor change and different genes may be change
 
 For this analysis, we want to investigate the expression of  NDD genes in ASD individuals compared to controls. 
 
-Checklist
+Neurodevelopmental disorder gene lists: 
 
-* List of NDD genes (make table and write function if possible)
-   * ASD genes 
-   * ID genes 
+```{r gene list setup, echo=FALSE, eval=TRUE}
+suppressPackageStartupMessages({
+  library(pander)
+  library(kableExtra)
+  library(tibble)
+  library(magrittr)
+  library(dplyr)
+  library(rmarkdown)
+  library(gdata)
+  library(biomaRt)
+  library(EnsDb.Hsapiens.v79)
+})
+```
+
+* ASD related genes 
+
+List of genes was downloaded from SFARI database and includes 913 genes in total
+
+```{r echo=FALSE, eval=TRUE}
+ASD_genes <- read.csv("~/Documents/PhD_year1/Lists/SFARI-Gene_genes_01-03-2020release_02-02-2020export.csv")
+
+
+ASD_genes %>%
+  dplyr::select("gene.symbol", "gene.name", "ensembl.id", 
+                "chromosome", "gene.score", "number.of.reports") %>%
+  kable(escape = F, align = "c") %>%
+  kable_styling(c("striped", "condensed"), full_width = F) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F) %>%
+  scroll_box(width = "1000px", height = "200px")
+  
+
+```
+
+
+
+* Intellectual disability genes
+
+
+```{r ID genes, echo =FALSE, eval=TRUE}
+ID_genes <- read.xls("~/Documents/PhD_year1/Lists/ID_Speech_delay_genes.xls") %>% 
+  as.data.frame() %>%
+  column_to_rownames("Gene")
+geneSymbols <- as.character(rownames(ID_genes))
+geneIDs <- ensembldb::select(EnsDb.Hsapiens.v79, keys= geneSymbols, keytype = "SYMBOL", columns = c("SYMBOL","GENEID"))
+ID_genes_complete <- merge(as.data.frame(ID_genes), 
+                           as.data.frame(geneIDs), by.x = "row.names",
+                           by.y = "SYMBOL", sort=FALSE)
+
+ID_genes_complete %>% 
+  dplyr::select("Gene" = "Row.names", "GENEID","Phenotype") %>%
+  kable(escape = F, align = "c") %>%
+  kable_styling(c("striped", "condensed"), full_width = F) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F) %>%
+  scroll_box(width = "1000px", height = "200px")
+
+```
+
    * Epilpsy genes 
 
 ## Exploratory analysis 
@@ -93,26 +147,11 @@ Checklist
 
 
 ```{r loading data}
-sn_counts <- readMM("~/Documents/Data/matrix.mtx")
-genes <- read_tsv("~/Documents/Data/genes.tsv", col_names = FALSE)
-barcodes <- read_tsv("~/Documents/Data/barcodes.tsv", col_names=FALSE)
+#Loading the SCE object created on PhoenixHPC 
 
-### creating single cell object 
-
-sce <- SingleCellExperiment(
-  assays=list(counts = sn_counts),
-  rowData = genes$X1 , 
-  colData = barcodes,
-  metadata = meta
-)
+#sce <- readRDS("sce.rds)
 ```
 
-
-```{r normalizating}
-
-cpm(sce) <- calculateCPM(sce)
-
-```
 
 
 ## Gene expression signature analysis 
@@ -130,28 +169,28 @@ Checklist
 
 ```{r}
 ## get names of all individuals that are ASD 
-autism <- meta %>%
-  rownames_to_column("sample_name") %>%
-  dplyr::filter(diagnosis == "ASD") %>% 
-  column_to_rownames("sample_name")
+#autism <- meta %>%
+#  rownames_to_column("sample_name") %>%
+#  dplyr::filter(diagnosis == "ASD") %>% 
+#  column_to_rownames("sample_name")
 
-autism_ind <- unique(autism$individual)
-autism_ind
+#autism_ind <- unique(autism$individual)
+#autism_ind
 ```
 
 ```{r}
-ASD_4849_oligo <- meta %>% 
-  rownames_to_column("sample_name") %>% 
-  dplyr::filter((individual == 4849 | diagnosis == "Control") & cluster == "Oligodendrocytes") %>% 
-  column_to_rownames("sample_name")
+#ASD_4849_oligo <- meta %>% 
+ # rownames_to_column("sample_name") %>% 
+  #dplyr::filter((individual == 4849 | diagnosis == "Control") & cluster == #"Oligodendrocytes") %>% 
+  #column_to_rownames("sample_name")
 
 
-sample_names <- rownames(ASD_4849_oligo)
-head(sample_names)
+#sample_names <- rownames(ASD_4849_oligo)
+#head(sample_names)
 ```
 
 ```{r}
-ASD_4849_oligo_mat <- dplyr::select(mat, sample_names)
+#ASD_4849_oligo_mat <- dplyr::select(mat, sample_names)
 
-head(ASD_4849_oligo_mat)[1:30]
+#head(ASD_4849_oligo_mat)[1:30]
 ```
