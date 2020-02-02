@@ -52,7 +52,7 @@ sce <- sce[keep_feature, ]
 # normalization 
 
 cpm(sce) <- calculateCPM(sce)
-sce <- normalize(sce)
+sce <- logNormCounts(sce)
 
 assayNames(sce)
 
