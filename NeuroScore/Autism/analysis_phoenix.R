@@ -24,6 +24,14 @@ colData(example_sce)
 rowData(example_sce)$stuff <- runif(nrow(example_sce))
 rowData(example_sce)
 
+unique(example_sce$`group #`)
+
+
+## calculating z scores for this data 
+
+## step 1, write a function that subsets into multiple matrics 
+
+
 ### cell-level metrics can be ran through the function perCellQCMetrics 
 ## including cells, number of detected cells 
 per.cell <- perCellQCMetrics(example_sce, 

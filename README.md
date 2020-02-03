@@ -5,5 +5,3 @@ Current analyses:
 * Gene expression signature analysis : Neuroscore 
 
 * Literature Review 
-
-* Crying 
