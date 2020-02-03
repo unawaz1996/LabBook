@@ -1,6 +1,7 @@
-Some important documents 
 
-Analysis document: gene_expression_signature.html
+Analysis document: gene_expression_signatures.html
+
+Some tutorials: 
 
 https://bioconductor.riken.jp/packages/3.4/bioc/vignettes/scater/inst/doc/vignette.html#quality-control
 
