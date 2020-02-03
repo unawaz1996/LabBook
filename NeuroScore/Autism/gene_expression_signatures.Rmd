@@ -4,6 +4,7 @@ author: "Urwah Nawaz"
 date: "15 January 2020"
 output:
   html_document:
+    code_folding: hide
     toc: true
     theme: lumen
 ---
@@ -77,7 +78,7 @@ For this analysis, we want to investigate the expression of  NDD genes in ASD in
 
 Neurodevelopmental disorder gene lists: 
 
-```{r gene list setup, echo=FALSE, eval=TRUE}
+```{r gene list setup}
 suppressPackageStartupMessages({
   library(pander)
   library(kableExtra)
@@ -95,8 +96,8 @@ suppressPackageStartupMessages({
 
 List of genes was downloaded from SFARI database and includes 913 genes in total
 
-```{r echo=FALSE, eval=TRUE}
-ASD_genes <- read.csv("~/Documents/PhD_year1/Lists/SFARI-Gene_genes_01-03-2020release_02-02-2020export.csv")
+```{r}
+ASD_genes <- read.csv("~/Documents/PhD_year1//Lists/SFARI-Gene_genes_01-03-2020release_02-02-2020export.csv")
 
 
 ASD_genes %>%
@@ -115,7 +116,7 @@ ASD_genes %>%
 * Intellectual disability genes
 
 
-```{r ID genes, echo =FALSE, eval=TRUE}
+```{r ID gene}
 ID_genes <- read.xls("~/Documents/PhD_year1/Lists/ID_Speech_delay_genes.xls") %>% 
   as.data.frame() %>%
   column_to_rownames("Gene")
@@ -160,20 +161,69 @@ Epi_genes_complete %>%
 ## Exploratory analysis 
 
  In this section, we explore several properties of the sn-RNAseq data including mean expression and variation of expression of various genes. Raw data from UCSC cell browser was downloaded and loaded into R. A SingleCellExperiment object was created and the data was filtered and normalized.
-
-```{r loading data}
-sce <- readRDS("singleCell_QC.rds")
+ 
+```{r}
+suppressPackageStartupMessages({
+  library(stringr)
+  library(Biobase)
+  library(SingleCellExperiment)
+  library(scater)
+  library(readr)
+  library(ggplot2)
+  library(ggpubr)
+})
 ```
+ 
+```{r meta}
+meta <- read.table("~/Documents/PhD_year1/neuro_score/Autism/meta.tsv", header=TRUE, sep = "\t", as.is = TRUE, row.names = 1)
+rownames(meta) <- str_replace(rownames(meta), "-", ".")
+
+```
+
+Number of cells belonging to each cluster: 
+
+```{r, fig.height=8}
+meta %>%
+  group_by(cluster) %>%
+  summarise(counts = n()) %>% 
+  ggplot(aes(x = cluster, y = counts)) +
+  geom_bar(fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) + coord_flip() +
+  theme_pubclean()
+```
+
+Number of cells belonging to each diagnosis (ASD or Control): 
+
+
+```{r}
+meta %>%
+  group_by(diagnosis) %>%
+  summarise(counts = n()) %>% 
+  ggplot(aes(x = diagnosis, y = counts)) +
+  geom_bar(fill = "#0073C2FF", stat = "identity") +
+  geom_text(aes(label = counts), vjust = -0.3) +
+  theme_pubclean()
+```
+
+
+
 
 
 ### Detection of gene expression
 
-```{r detection}
-plotColData(sce, x="sum", y="detected", colour_by = "cluster")
+```{r loading data}
+#sce <- readRDS("singleCell_QC.rds")
 ```
 
+```{r detection}
+#plotColData(sce, x="sum", y="detected", colour_by = "cluster")
+```
+
+checklist 
+
+
  * Genes detected 
- * mean expression of genes (in all transformations?)
+ * mean expression of genes
  * expression of NDD vs non-NDD genes in clusters 
  * which cluster expresses the most amount of NDD genes 
  * variance of expression 
@@ -184,6 +234,7 @@ plotColData(sce, x="sum", y="detected", colour_by = "cluster")
 
 Checklist 
 
+
 * write function for z-score calculation 
    * Must subset 1 ASD individual, all controls in 1 cell type  per gene 
    * must group (average) expression of cells per individual 
@@ -191,9 +242,9 @@ Checklist
    * End must be matrix with z-score for each cluster for each gene 
 
 
-* Plot boxplot for top 10 interesting genes (per gene list)
+* Plot boxplot for top 10 interesting genes (per gene list)? 
 
-```{r}
+```{r, echo=FALSE, eval=FALSE}
 ## get names of all individuals that are ASD 
 #autism <- meta %>%
 #  rownames_to_column("sample_name") %>%
@@ -202,9 +253,7 @@ Checklist
 
 #autism_ind <- unique(autism$individual)
 #autism_ind
-```
 
-```{r}
 #ASD_4849_oligo <- meta %>% 
  # rownames_to_column("sample_name") %>% 
   #dplyr::filter((individual == 4849 | diagnosis == "Control") & cluster == #"Oligodendrocytes") %>% 
@@ -213,22 +262,25 @@ Checklist
 
 #sample_names <- rownames(ASD_4849_oligo)
 #head(sample_names)
-```
 
-```{r}
 #ASD_4849_oligo_mat <- dplyr::select(mat, sample_names)
 
 #head(ASD_4849_oligo_mat)[1:30]
 ```
 
 
-# Side notes 
+# Notes 
 
 ## Single-nucleus RNA-seq 
 
 Single-nucleus RNA-seq strategies involve analyzing the nuclei instead of cells. This method is advantegeous when attempting to profile expression in cells that are difficult to isolate such as frozen tissue samples. 
 
-More reading here: 
+More reading here:
+
+https://www.biocompare.com/Editorial-Articles/557506-Advantages-of-Single-Nucleus-RNA-Sequencing/
+
+https://jasn.asnjournals.org/content/30/1/23
+
 
 
 ## Normalization in sc-RNAseq 
