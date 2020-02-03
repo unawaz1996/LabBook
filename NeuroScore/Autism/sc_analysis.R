@@ -50,12 +50,8 @@ summary(per.cell$detected)
 
 colData(sce) <- cbind(colData(sce), per.cell)
 
-### expression plot of detected genes 
-pdf("Rplot.pdf")
-plotColData(example_sce, x = "sum", y="detected", colour_by="diagnosis") 
 
-plotColData(example_sce, x = "sum", y="detected", colour_by="cluster") 
-dev.off()
+saveRDS(sce, "singleCell_QC.rds")
 
 keep.total <- sce$sum > 1e5
 keep.n <- sce$detected > 500
@@ -66,7 +62,6 @@ dim(filtered)
 keep.total <- isOutlier(per.cell$sum, type="lower", log=TRUE)
 filtered <- sce[,keep.total]
 
-#qc.stats <- quickPerCellQC(per.cell, percent_subsets="subsets_Mito_percent")
 
 per.feat <- perFeatureQCMetrics(sce)
 summary(per.feat$mean)
@@ -84,6 +79,15 @@ summary(librarySizeFactors(example_sce))
 
 cpm(sce) <- calculateCPM(sce)
 
-saveRDS(sce, "singleCell.rds")
+saveRDS(sce, "singleCell_full.rds")
+
+### expression plot of detected genes 
+pdf("Rplot.pdf")
+plotColData(sce, x = "sum", y="detected", colour_by="diagnosis") 
+
+plotColData(sce, x = "sum", y="detected", colour_by="cluster") 
+dev.off()
+
+
 
 stopCluster(cl)
