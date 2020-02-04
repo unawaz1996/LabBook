@@ -13,13 +13,13 @@ suppressPackageStartupMessages({
   library(parallel)
 })
 
-slurm_ncores <- as.integer(Sys.getenv("SLURM_CPUS_PER_TASK"))
-if (is.numeric(slurm_ncores)) {
-cores <- as.integer(Sys.getenv("SLURM_JOB_CPUS_PER_NODE"))
-} else { cores = detectCores()}
+#slurm_ncores <- as.integer(Sys.getenv("SLURM_CPUS_PER_TASK"))
+#if (is.numeric(slurm_ncores)) {
+#cores <- as.integer(Sys.getenv("SLURM_JOB_CPUS_PER_NODE"))
+#} else { cores = detectCores()}
 
 
-cl<-makeCluster(cores)
+cl<-makeCluster(12)
 
 meta <- read.table("/fast/users/a1654797/PhD_year1/Data/meta.tsv", header=T, sep="\t", as.is=T, row.names=1)
 rownames(meta) <- str_replace(rownames(meta), "-", ".")
