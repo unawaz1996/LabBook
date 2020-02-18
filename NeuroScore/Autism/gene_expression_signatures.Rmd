@@ -10,13 +10,15 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, cache = TRUE, cache.lazy = FALSE)
 ```
 
 # Paper summary
 The study by Velmeshev et al (2019) analysed transcriptomic changes in the brains of individuals with autism to gain insight into the molecular pathology of ASD in a cell-type specifc manner.
 
 The study used single-nucleus RNA-sequencing strategy on postmortem tissue samples including the prefrontal cortex and anerior cingulator cortex from 15 ASD patients and 16 controls. None of the ASD patients were diagnosed with ID. Additionally, patients that only had sporadic epilespy were also included in this analysis along with 7 age matched controls.
+
+
 
 ## Characteristics of the data 
 
@@ -28,11 +30,6 @@ The study used single-nucleus RNA-sequencing strategy on postmortem tissue sampl
 * Detected a median of 1391 genes and 2213 transcripts per nucleus
 * Identified 17 cell types by using expression of known cell markers
 * Neurons expressed more genes and transcripts than glia 
-
-* highlight key results from this study
-    * what is single nucleus data 
-    * why is it better to study instead of snRNA-seq for some scenarios 
-
 
 ## Differential expression results 
 
@@ -92,12 +89,12 @@ suppressPackageStartupMessages({
 })
 ```
 
-* ASD related genes 
+* **ASD related genes**
 
 List of genes was downloaded from SFARI database and includes 913 genes in total
 
 ```{r}
-ASD_genes <- read.csv("~/Documents/PhD_year1//Lists/SFARI-Gene_genes_01-03-2020release_02-02-2020export.csv")
+ASD_genes <- read.csv("~/Documents/Lists/SFARI-Gene_genes_01-03-2020release_02-06-2020export.csv")
 
 
 ASD_genes %>%
@@ -111,13 +108,17 @@ ASD_genes %>%
 
 ```
 
+The ASD risk genes from SFARI are scored from 1 to 3, where 1 is high confidence genes and 3 means that there is suggestive evidence for ASD risk.
 
 
-* Intellectual disability genes
+
+
+
+* **Intellectual disability genes**
 
 
 ```{r ID gene}
-ID_genes <- read.xls("~/Documents/PhD_year1/Lists/ID_Speech_delay_genes.xls") %>% 
+ID_genes <- read.xls("~/Documents/Lists/ID_Speech_delay_genes.xls") %>% 
   as.data.frame() %>%
   column_to_rownames("Gene")
 geneSymbols <- as.character(rownames(ID_genes))
@@ -135,10 +136,10 @@ ID_genes_complete %>%
 
 ```
 
-   * Epilpsy genes 
+   * **Epilpsy genes**
    
 ```{r}
-Epi_genes <- read.xls("~/Documents/PhD_year1/Lists/Final_Epil_list_annotated_Jan19.xls")  %>% 
+Epi_genes <- read.xls("~/Documents/Lists/Final_Epil_list_annotated_Jan19.xls")  %>% 
   as.data.frame() 
 
 geneSymbols <- as.character(Epi_genes$old.list)
@@ -158,29 +159,42 @@ Epi_genes_complete %>%
   
 ```
 
-## Exploratory analysis 
+The ID and Epilpsy genes have been curated in-house after an in-depth literature analysis.
+
+There are overlapping genes for each category, however for the purpose of this analysis, we will keep the groups as they are.
+
+## Exploratory analysis
 
  In this section, we explore several properties of the sn-RNAseq data including mean expression and variation of expression of various genes. Raw data from UCSC cell browser was downloaded and loaded into R. A SingleCellExperiment object was created and the data was filtered and normalized.
- 
-```{r}
+
+```{r libraries}
 suppressPackageStartupMessages({
-  library(stringr)
-  library(Biobase)
-  library(SingleCellExperiment)
-  library(scater)
-  library(readr)
-  library(ggplot2)
-  library(ggpubr)
+  library(stringr) # CRAN
+  library(Biobase) # Bioconductor 
+  library(SingleCellExperiment) # bioC
+  library(scater) # bioC
+  library(readr) # CRAN
+  library(ggplot2) # Bioc
+  library(ggpubr) # bioC
+  library(Matrix) # CRAN
+  library(DropletUtils) #bioC
+  library(tidyverse)
+  library(gdata)
+  library(EnsDb.Hsapiens.v79)
+  library(scran)
+  library(tibble)
+  library(data.table)
 })
 ```
  
+
 ```{r meta}
-meta <- read.table("~/Documents/PhD_year1/neuro_score/Autism/meta.tsv", header=TRUE, sep = "\t", as.is = TRUE, row.names = 1)
+meta <- read.table("~/Documents/Data/Autism/meta.tsv", header=TRUE, sep = "\t", as.is = TRUE, row.names = 1)
 rownames(meta) <- str_replace(rownames(meta), "-", ".")
 
 ```
 
-Number of cells belonging to each cluster: 
+Number of cells belonging to each cluster:
 
 ```{r, fig.height=8}
 meta %>%
@@ -198,37 +212,141 @@ Number of cells belonging to each diagnosis (ASD or Control):
 ```{r}
 meta %>%
   group_by(diagnosis) %>%
-  summarise(counts = n()) %>% 
+  summarise(counts = n()) %>%
   ggplot(aes(x = diagnosis, y = counts)) +
   geom_bar(fill = "#0073C2FF", stat = "identity") +
   geom_text(aes(label = counts), vjust = -0.3) +
   theme_pubclean()
 ```
 
-
-
-
-
-### Detection of gene expression
+### Quality control and explatory analysis of the data
 
 ```{r loading data}
-#sce <- readRDS("singleCell_QC.rds")
+sn_counts <- readMM("~/Documents/Data/Autism/matrix.mtx")
+genes <- read_tsv("~/Documents/Data/Autism/genes.tsv", col_names = FALSE)
+barcodes <- read_tsv("~/Documents/Data/Autism/barcodes.tsv", col_names=FALSE)
 ```
+
+```{r sce object}
+sce <- SingleCellExperiment(
+  assays=list(counts = sn_counts),
+  rowData = genes$X1 ,
+  colData = barcodes,
+  metadata = meta
+)
+
+rownames(sce) <- genes$X1
+
+```
+
+```{r filtering}
+## filtering the genes
+keep_feature <- rowSums(counts(sce) > 0) > 0
+sce <- sce[keep_feature, ]
+```
+
+Here, we will use the `perCellQCMetrics` to calculate metrics for each cell in the data. 
+This gives us an output of the following:
+
+* Sum of counts (i.e library size)
+
+* Number of detected features 
+
+* percentage of counts in the top features
+
+Additionally, if we have given the function list of subsets, we get these quality metrics for each of those subsets as well. 
+
+
+```{r QC matrixces}
+per.cell <- perCellQCMetrics(sce,
+                             subsets=list(ASD=ASD_genes$gene.symbol,
+                                          EP_genes=Epi_genes$Gene,
+                                          ID_genes=factor(ID_genes_complete$Gene)))
+
+colData(sce) <- cbind(colData(sce), per.cell)
+```
+
+
 
 ```{r detection}
-#plotColData(sce, x="sum", y="detected", colour_by = "cluster")
+sce$cluster <- meta$cluster
+sce$diagnosis <- meta$diagnosis
 ```
 
-checklist 
+
+```{r histograms, fig.cap="Histograms of library sizes (left) and the number of expressed genes for all cells in the snRNA-seq data"}
+
+par(mfrow=c(1,2))
+hist(sce$sum/1e6,xlab="Library sizes (millions)", 
+     main="",breaks=20, col="grey80", ylab="Number of cells")
+hist(sce$detected, xlab="Number of features detected", 
+     main="",breaks=20, col="grey80", ylab="Number of cells", ylim = c(0,40000), 
+     xlim = c(0, 12000))
+```
+
+```{r colData}
+plotColData(sce, x = "sum", y="detected", other_fields ="diagnosis") + facet_wrap(~diagnosis)
+```
 
 
- * Genes detected 
- * mean expression of genes
- * expression of NDD vs non-NDD genes in clusters 
- * which cluster expresses the most amount of NDD genes 
- * variance of expression 
+
+#### Proportion of NDD genes detected in this analysis 
+
+```{r}
+par(mfrow=c(1,3))
+hist(sce$subsets_ASD_percent, xlab="Proportion of ASD genes (%)", 
+     main="", col="pink1", ylab="Number of cells")
+hist(sce$subsets_ID_genes_percent, xlab="Proportion of ID genes (%)", 
+     main="", col="stateblue1", ylab="Number of cells")
+hist(sce$subsets_EP_percent, xlab="Proportion of Epilepsy genes (%)", 
+     main="", col="plum", ylab="Number of cells")
+```
+
+```{r}
+## ep
+plotColData(sce, x = "sum", y="subsets_EP_genes_percent", 
+            other_fields="cluster") + facet_wrap(~cluster)
+```
 
 
+```{r}
+## ID
+plotColData(sce, x = "sum", y="subsets_ID_genes_percent", 
+            other_fields="cluster") + facet_wrap(~cluster)
+```
+
+
+### Per feature QC 
+
+* mean: the mean counts for each feature 
+
+* detected: the percentage of detection of features 
+
+
+```{r}
+per.feat <- perFeatureQCMetrics(sce,subsets=list(ASD=ASD_genes$gene.symbol,
+                                                 EP_genes=Epi_genes$Gene,
+                                                 ID_genes=factor(ID_genes_complete$Gen)))
+
+rowData(sce) <- cbind(rowData(sce), per.feat)
+```
+
+Here, the scatterplot is the mean plotted aganist the detected for all cells. 
+
+```{r}
+plotRowData(sce, y="detected", x="mean") + scale_x_log10()
+```
+
+
+```{r expression calculuations, cache=TRUE}
+ave <- calculateAverage(sce)
+sce <- logNormCounts(sce)
+cpm(sce) <- calculateCPM(sce)
+```
+
+
+
+### Normalization 
 
 ## Gene expression signature analysis 
 
@@ -243,6 +361,7 @@ Checklist
 
 
 * Plot boxplot for top 10 interesting genes (per gene list)? 
+
 
 ```{r, echo=FALSE, eval=FALSE}
 ## get names of all individuals that are ASD 
