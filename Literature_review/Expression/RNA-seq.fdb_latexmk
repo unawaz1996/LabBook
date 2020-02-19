@@ -1,8 +1,8 @@
 # Fdb version 3
-["pdflatex"] 1581902389 "/home/neuro/Documents/LabBook/Literature_review/Expression/RNA-seq.tex" "/home/neuro/Documents/LabBook/Literature_review/Expression/RNA-seq.pdf" "RNA-seq" 1581902389
+["pdflatex"] 1582082601 "/home/neuro/Documents/LabBook/Literature_review/Expression/RNA-seq.tex" "/home/neuro/Documents/LabBook/Literature_review/Expression/RNA-seq.pdf" "RNA-seq" 1582082601
   "/etc/texmf/web2c/texmf.cnf" 1544506477 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/neuro/Documents/LabBook/Literature_review/Expression/RNA-seq.aux" 1581902389 177 162bd30789488c214b8204fa69ed6c2d ""
-  "/home/neuro/Documents/LabBook/Literature_review/Expression/RNA-seq.tex" 1581902386 1325 ee6004041846ed595dcd98d50e481179 ""
+  "/home/neuro/Documents/LabBook/Literature_review/Expression/RNA-seq.aux" 1582082601 177 162bd30789488c214b8204fa69ed6c2d ""
+  "/home/neuro/Documents/LabBook/Literature_review/Expression/RNA-seq.tex" 1582082599 2061 e65c5d294797c9932d8233e9e2bea573 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm" 1480098701 1324 c910af8c371558dc20f2d7822f66fe64 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmr12.tfm" 1480098701 1288 655e228510b4c2a1abe905c368440826 ""
@@ -73,11 +73,11 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1520210507 32485 c64754543d8ac501bea6e75e209ea521 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1544506544 2700761 ac0584cc9514ab21918550a6948c4ee2 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1544506574 4126925 5e659fa843ea6f34ebaf919869a0a5ca ""
-  "RNA-seq.aux" 1581902389 177 162bd30789488c214b8204fa69ed6c2d ""
-  "RNA-seq.tex" 1581902386 1325 ee6004041846ed595dcd98d50e481179 ""
+  "RNA-seq.aux" 1582082601 177 162bd30789488c214b8204fa69ed6c2d ""
+  "RNA-seq.tex" 1582082599 2061 e65c5d294797c9932d8233e9e2bea573 ""
   (generated)
-  "RNA-seq.log"
-  "/home/neuro/Documents/LabBook/Literature_review/Expression/RNA-seq.log"
-  "RNA-seq.pdf"
   "/home/neuro/Documents/LabBook/Literature_review/Expression/RNA-seq.pdf"
+  "/home/neuro/Documents/LabBook/Literature_review/Expression/RNA-seq.log"
   "RNA-seq.aux"
+  "RNA-seq.log"
+  "RNA-seq.pdf"
