@@ -1,0 +1,70 @@
+\documentclass[12pt]{article}
+\usepackage[margin = 2.4cm]{geometry} % For margins of 3cm
+\usepackage{graphicx}
+\usepackage{float} % For H float position
+\usepackage{gensymb} % For some symbols
+\usepackage{amsfonts, amssymb, amsmath} % All three for maths symbols
+\usepackage[export]{adjustbox} % For figure frames
+\setlength{\parskip}{6pt} % To make nice looking paragraph spacing
+\usepackage[export]{adjustbox} % For figure frames
+\usepackage{rotating}
+\usepackage[section]{placeins}
+\usepackage{lscape}
+\usepackage{setspace} % For double spacing
+\usepackage{pdfpages} % Allows including PDFs
+\usepackage[sort&compress]{natbib} % bibliographies
+\doublespacing
+
+\title{Spatiotempotal properties of NDD genes during brain development for biomarker discovery}
+\author{Urwah Nawaz}
+
+
+\begin{document}
+	\maketitle
+
+\section{Studying the brain using expression studies}
+The brain is functionally organized into regions, which are distinguished by distinct compositions of molecularly defined cell types and region-dependent patterns. These anatomical, and functional differences are reflected in the brain transcriptome. 
+Furthermore, the brain undergoes protracted periods of development, refinement, and maturation, spanning the early fetal periods to adolescence.
+During these windows of development any alternation in gene expression can lead to neurodevelopmental dysfunction in the brain. 
+To link gene expression to function, several RNA-seq studies have analysed brain samples from distinct stages of development to understand the complexity of the brain. In this section of the review, we will discuss the application of using expression datasets to study functios of the brain. 
+We will also discuss how in recent years rna-seq studies have been leveraged by single-cell techniques and discuss all pubically available resources
+
+\subsection{From bulk-expression to single-cell}
+Over the past few years, RNA‐Seq has gained increasing popularity and supplanted microarrays as the primary high‐throughput choice for quantifying the whole transcriptome.
+RNA‐Seq, based based on next‐generation sequencing, directly determined the cDNA sequence. It effectively surmounts the limitations of microarray: a priori sequence knowledge is not required; different layers including exon‐, isoform‐ and gene‐level quantification can be performed; and large dynamic range can be obtained. As the human brain exhibits a more diverse splicing program than other tissues.  RNA‐Seq technology has become an ideal tool to interrogate the role of splicing events as well as transcriptomic changes in the development of neurological disorders.
+
+
+
+Format: around 5-7 gene studies using bulk RNA-seq and then limitations of bulk rna-seq approach --> discuss single-cell rna-seq
+
+\subsection{Single-cell platforms}
+Single-cell RNA-seq gained popularity after Tang et al demonstrated its feasibility to characterize expression profiles of individual cells using NGS technologies. Since this publication, a great interest was developed in utlising sc-RNAseq for transcriptomic analyses due to its identify rare cell populations which could have not been detected from bulk RNA-seq analysis.  In recent years this technology has also been applied to study the mammalian brain to understand the complexity, connectivity and functions of the brain cell types. 
+
+Darmanis et al (2015) were first to perform a single-cell whole transcriptome analysis of adult human cortical samples and embryonic cells. By using the Fluidigm C1 system they were able to capture 466 cells. 
+
+ 
+
+\subsection{RNA-seq methods including deconvulution of bulk-expression}
+
+\subsection{Large scale transcriptomic resources}
+
+
+
+\section{Current data availability}
+
+\begin{landscape}
+	\begin{table}[!htp]
+		\centering
+		\footnotesize
+		\caption{Expression studies that utilised single-cell profiling technologies (Not ordered by any particular way)}
+		\begin{tabular}{|l|l|l|l|l|l|l|l|}
+			\hline
+			\textbf{Authors} &\textbf{Year}  & \textbf{Tissues} & \textbf{Method} & \textbf{No. of Cells/Nuclei}  & \textbf{Age} &  \textbf{No. of individuals} & \textbf{Data availability}  \\ \hline
+			Velmeshev et al & 2019  &  PFC and ACC  & snRNA-seq  & 104,559 & 4-22 pm &15 ASD; 16 controls; total 31&  \\ \hline
+			Late et al& 2016  & Brodmann's areas  & snRNA-seq & 4488 &51 pm & 1 healthy individual &  \\ \hline
+			Nowakozski et al & 2017 &V1, PFC & scRNA-seq     & &&& \\ \hline
+		\end{tabular}
+	\end{table}
+\end{landscape}
+
+\end{document}
