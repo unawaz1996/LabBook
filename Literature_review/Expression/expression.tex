@@ -22,6 +22,14 @@
 \begin{document}
 	\maketitle
 
+
+\begin{itemize}
+	\item section 1: brief overview of expression studies used in the brain 
+	\item section 2: bulk to scrna-seq -> discuss some important finding of bulk rna-seq and discuss limations of bulk rna-seq
+	\item section 3: single-cell studies and explanation of technologies used on the human brain + also discuss with NDDs --> end with some downsides of using sc-rnaseq and its limitations for using on postmortem brains
+	\item section 4: deconvulution technqiues to be able to integrate the bulk data 
+	\item 
+\end{itemize}
 \section{Studying the brain using expression studies}
 The brain is functionally organized into regions, which are distinguished by distinct compositions of molecularly defined cell types and region-dependent patterns. These anatomical, and functional differences are reflected in the brain transcriptome. 
 Furthermore, the brain undergoes protracted periods of development, refinement, and maturation, spanning the early fetal periods to adolescence.
@@ -37,11 +45,33 @@ RNA‐Seq, based based on next‐generation sequencing, directly determined the 
 
 Format: around 5-7 gene studies using bulk RNA-seq and then limitations of bulk rna-seq approach --> discuss single-cell rna-seq
 
-\subsection{Single-cell platforms}
-Single-cell RNA-seq gained popularity after Tang et al demonstrated its feasibility to characterize expression profiles of individual cells using NGS technologies. Since this publication, a great interest was developed in utlising sc-RNAseq for transcriptomic analyses due to its identify rare cell populations which could have not been detected from bulk RNA-seq analysis.  In recent years this technology has also been applied to study the mammalian brain to understand the complexity, connectivity and functions of the brain cell types. 
+\subsection{Single-cell RNA-seq analysis on brain tissues}
 
-Darmanis et al (2015) were first to perform a single-cell whole transcriptome analysis of adult human cortical samples and embryonic cells. By using the Fluidigm C1 system they were able to capture 466 cells and were able to interrogate the diversity within cortical neurons of the adult brain. Additionally they were able to see the differences pre and post-natal neurons. Similarly, 
 
+Single-cell RNA-seq gained popularity after Tang et al demonstrated its feasibility to characterize expression profiles of individual cells using NGS technologies. Since this publication, a great interest was developed in utlising sc-RNAseq for transcriptomic analyses due to its identify rare cell populations which could have not been detected from bulk RNA-seq analysis.  Several techniques have been developed over the years to study the human brain. 
+
+One of the first scRNA-seq analyses on the human brain was performed by Darmanis et al (2015). Darmanis et al used Fluidigm C1 chip protocol to profile the expression of over 400 cells from the adult human cortical brain samples and developing brain samples of 16-18 weeks pc embryos. The study was able to identify inhibatory and excitatory neurons as well as major glial subtypes. Additionally, it was also able to infer expression differences between pre- and postnatal brains.  
+
+Several other studies also used the Fluidigm C1 chip protocol to study the brain. Nowakoski et al (2017) profiled cells from the developing human cerebral cortex and leveraged gene expression analysis using weighted gene co-expression networks. Similarly, Polioudakis et al (2019) also profiled rouhgly 40,00 cells from the developing brain to create a high resolution atlas of the developing human cortex. 
+
+While several different technologies exist for single-cell resolution capture of tissues, these studies were limited to fetal development. Additionally single-cell 
+
+
+
+
+Similarly,  Krishnaswami et al. (2016) established one of the first protocols for snRNA-seq on human post-mortem brain tissue using fluorescence assisted nuclei sorting (FANS) to place individual neuronal nuclei, selected based on NeuN expression, into the wells of a microplate and used a SMART-seq approach for generating libraries. This work demonstrated  the feasibility of snRNA-seq in archived post-mortem tissues, such as those accessible through brain banks.
+
+
+Lake et al. (2016) performed Fluidigm C1 chip capture of NeuN positive FAN sorted neuronal nuclei to profile more than 3000 neurons from various cortical regions of a single healthy subject.
+They identified numerous inhibitory and excitatory neuronal subtypes which were in broad agreement with the cell-types described by Darmanis et al. (2015), but revealed finer subtypes powered by the larger dataset, such as layer-specific and region-specific excitatory neuron subtypes.
+
+Habib et al. (2017), created an snRNA-seq method they termed DroNc-seq and applied it to several post-mortem human prefrontal cortex (PFC) and hippocampus samples, in addition to mouse brain tissue. DroNc-seq incorporated several adjustments to the Drop-seq [6] protocol, including an alteration to the dimensions of the microfluidic device to allow for capture of nuclei, which are smaller than cells, and inclusion of intronic reads in analyses due to the preponderance of pre-mRNA in the nucleus. They were the first to demonstrate the feasibility of droplet-based high-throughput snRNA-seq in archived post-mortem human brain tissue [8]. Furthermore, there was good correspondence in cell-types between the mouse and human datasets and with the findings of Lake et al. (2016).
+
+Lake et al. (2018) independently designed an adaptation of Drop-seq for snRNA-seq. Their modifications included heat-based lysis of nuclei and incorporation of intronic reads, similar to Habib et al. (2017). Moreover, they performed an assay for single-nucleus chromatin accessibility based on combinatorial barcoding, in addition to snRNA-seq, and used their snRNA-seq findings to refine clustering of single-nuclei based on chromatin accessibility [47••]. Although tissue was obtained from healthy subjects, the cell-type specific chromatin accessibility information generated was used to indirectly assess cell-type involvement in neurological and psychiatric diseases.
+
+While most studies have focused on the cortex, Welch et al. (2019) performed high-throughput snRNA-seq on more than 40,000 nuclei derived from archived substantia nigra samples from 7 healthy donors. They developed and applied a single-cell data analysis tool called LIGER for aligning the data from multiple individuals into a consolidated dataset. Clustering driven by inter-individual variability is a recurring problem in snRNA-seq datasets, and LIGER was able to mitigate this effect. They identified the expected subtypes of glial and neuronal cells, including dopaminergic neurons. Moreover, they were able to pin-point subject specific effects: including activation of microglia in one subject who experienced traumatic brain injury (TBI) at the time of death, and distinct microglial and astrocytic signatures in another subject with histological signs of amyloid deposits upon post-mortem examination [48••]. Thus, not only will their dataset serve as a reference for future snRNA-seq studies of the substantia nigra, but their software, which can effectively combine results from multiple datasets for joint analysis without losing dataset-specific components of the information, will be widely applicable in future single-cell sequencing studies.
+
+While the massive capacity of high-throughput snRNA-seq is enticing, some questions require a more targeted approach as exemplified by a recent human brain snRNA-seq study from the Allen Institute [49]. Boldog et al., (2018) identified a new subtype of inhibitory neuron, dubbed the rosehip neuron, which seems to be uniquely found in the human cortex. The information from snRNA-seq was complemented by morphological and electrophysiological data from surgical tissue as well as corroborated with fluorescent in situ hybridization (ISH). The data from this study is part of a larger human mid-temporal gyrus dataset [50], generated by the Allen Institute from both post-mortem samples and surgical tissue and it provides an excellent resource for benchmarking data produced by high-throughput platforms. Uniquely, this dataset accounted for cortical layer location during the dissection and extraction of nuclei.
  
 
 \subsection{RNA-seq methods including deconvulution of bulk-expression}
@@ -56,13 +86,25 @@ Darmanis et al (2015) were first to perform a single-cell whole transcriptome an
 	\begin{table}[!htp]
 		\centering
 		\footnotesize
-		\caption{Expression studies that utilised single-cell profiling technologies (Not ordered by any particular way)}
+		\caption{Single-cell RNA-sequencing studies of the human brain}
 		\begin{tabular}{|l|l|l|l|l|l|l|l|}
 			\hline
 			\textbf{Authors} &\textbf{Year}  & \textbf{Tissues} & \textbf{Method} & \textbf{No. of Cells/Nuclei}  & \textbf{Age} &  \textbf{No. of individuals} & \textbf{Data availability}  \\ \hline
-			Velmeshev et al & 2019  &  PFC and ACC  & snRNA-seq  & 104,559 & 4-22 pm &15 ASD; 16 controls; total 31&  \\ \hline
-			Late et al& 2016  & Brodmann's areas  & snRNA-seq & 4488 &51 pm & 1 healthy individual &  \\ \hline
 			Nowakozski et al & 2017 &V1, PFC & scRNA-seq     & &&& \\ \hline
+		\end{tabular}
+	\end{table}
+\end{landscape}
+
+
+
+\begin{landscape}
+	\begin{table}[!htp]
+		\centering
+		\footnotesize
+		\caption{Single-nucleus RNA-sequencing studies of the human brain}
+		\begin{tabular}{|l|l|l|l|l|l|l|l|}
+			\hline
+			\textbf{Authors} &\textbf{Year}  & \textbf{Tissues} & \textbf{Method} & \textbf{No. of Cells/Nuclei}  & \textbf{Age} &  \textbf{No. of individuals} & \textbf{Data availability}  \\ \hline
 		\end{tabular}
 	\end{table}
 \end{landscape}
