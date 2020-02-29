@@ -1,0 +1,42 @@
+\begin{thebibliography}{}
+
+\bibitem[\protect\astroncite{Darmanis et~al.}{2015}]{darmanis2015survey}
+Darmanis, S., Sloan, S.~A., Zhang, Y., Enge, M., Caneda, C., Shuer, L.~M.,
+  Gephart, M. G.~H., Barres, B.~A., and Quake, S.~R. (2015).
+\newblock A survey of human brain transcriptome diversity at the single cell
+  level.
+\newblock {\em Proceedings of the National Academy of Sciences},
+  112(23):7285--7290.
+
+\bibitem[\protect\astroncite{Fan et~al.}{2018}]{fan2018spatial}
+Fan, X., Dong, J., Zhong, S., Wei, Y., Wu, Q., Yan, L., Yong, J., Sun, L.,
+  Wang, X., Zhao, Y., et~al. (2018).
+\newblock Spatial transcriptomic survey of human embryonic cerebral cortex by
+  single-cell rna-seq analysis.
+\newblock {\em Cell research}, 28(7):730--745.
+
+\bibitem[\protect\astroncite{Johnson et~al.}{2015}]{johnson2015single}
+Johnson, M.~B., Wang, P.~P., Atabay, K.~D., Murphy, E.~A., Doan, R.~N., Hecht,
+  J.~L., and Walsh, C.~A. (2015).
+\newblock Single-cell analysis reveals transcriptional heterogeneity of neural
+  progenitors in human cortex.
+\newblock {\em Nature neuroscience}, 18(5):637.
+
+\bibitem[\protect\astroncite{Nowakowski
+  et~al.}{2017}]{nowakowski2017spatiotemporal}
+Nowakowski, T.~J., Bhaduri, A., Pollen, A.~A., Alvarado, B., Mostajo-Radji,
+  M.~A., Di~Lullo, E., Haeussler, M., Sandoval-Espinosa, C., Liu, S.~J.,
+  Velmeshev, D., et~al. (2017).
+\newblock Spatiotemporal gene expression trajectories reveal developmental
+  hierarchies of the human cortex.
+\newblock {\em Science}, 358(6368):1318--1323.
+
+\bibitem[\protect\astroncite{Polioudakis et~al.}{2019}]{polioudakis2019single}
+Polioudakis, D., de~la Torre-Ubieta, L., Langerman, J., Elkins, A.~G., Shi, X.,
+  Stein, J.~L., Vuong, C.~K., Nichterwitz, S., Gevorgian, M., Opland, C.~K.,
+  et~al. (2019).
+\newblock A single-cell transcriptomic atlas of human neocortical development
+  during mid-gestation.
+\newblock {\em Neuron}, 103(5):785--801.
+
+\end{thebibliography}

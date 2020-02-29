@@ -1,0 +1,74 @@
+\documentclass[12pt]{article}
+\usepackage[margin = 2.4cm]{geometry} % For margins of 3cm
+\usepackage{graphicx}
+\usepackage{float} % For H float position
+\usepackage{gensymb} % For some symbols
+\usepackage{amsfonts, amssymb, amsmath} % All three for maths symbols
+\usepackage[export]{adjustbox} % For figure frames
+\setlength{\parskip}{6pt} % To make nice looking paragraph spacing
+\usepackage[export]{adjustbox} % For figure frames
+\usepackage{rotating}
+\usepackage[section]{placeins}
+\usepackage{setspace} % For double spacing
+\usepackage{titling}
+\usepackage{lscape}
+\usepackage{courier}
+\usepackage[sort&compress]{natbib} % bibliographies
+\doublespacing
+
+
+\begin{document}
+    \section{Single-Cell RNA-seq}
+    Recent advances in Next Generation Sequencing technolgies, techniques for the single-cell isolation, and  molecular  barcoding  techniques  have  enabled  the  generation  and  sequencing  of cDNA libraries from a single cell, thus cell-to-cell heterogeneity at the level of the transcriptome can be assessed. This technique, single-cell RNA-seq (scRNA-seq), is emerging as a powerful tool to classify new  cell  populations, characterize rare cell types and track the developmental lineage of cell poputlations at a single cell resolution. Several variations of the techniques have been applied to the brain. 
+    
+    In one of the first studies to profile the human brain at a single-cell level, \cite{darmanis2015survey} profiled over 400 cells from the surgically excised adult cortical brain samples and developing brain samples of 16-18 weeks pc embryos. The study used the Fluidigm C1 system, an isolation technique that uses microfluidic chips, to capture single cells and generate libraries. The study was able to identify inhibatory and excitatory neurons as well as major glial celltypes and were able to infer expression differences between pre- and post-natal human brains. 
+    
+    The developing brain: \cite{nowakowski2017spatiotemporal} performed scRNA-seq of the human fetal cortex and medial ganglionic eminece across key stages of prenatal neurogenesis using the Fluidigm C1 system. 
+    The analysis and clustering of 4261 cells revealed lineage-dependant trajectories of transcriptional regulators. 
+    
+    
+    Similarly, \cite{fan2018spatial} also profiled over 4,000 cells from 22 regions of the developing brain. This study uncovered 29 cell sub-clusters within the mid-gestation stage of the human gestation. \cite{polioudakis2019single} profiled the mid-gestation stage of of the embryo 
+    
+ 
+    
+    \subsection{Single-cell RNA-seq isolation protocols}
+    \subsection{Application of single cell RNA-seq in the brain}
+    
+    Single-cell RNA-seq gained popularity after Tang et al (2009) demonstrated its feasibility to characterize expression profiles of individual cells using NGS technologies. 
+    Since this publication, a great interest was developed in utlising sc-RNAseq for transcriptomic analyses due to its identify rare cell populations which could have not been detected from bulk RNA-seq analysis.
+    Several techniques have been developed over the years to study the human brain. 
+   
+    
+    One of the first scRNA-seq analyses on the human brain was performed by Darmanis et al (2015). Darmanis et al used Fluidigm C1 protocol to profile the expression of over 400 cells from the surgically excised adult human cortical brain samples and developing brain samples of 16-18 weeks pc embryos. Through this study, Darmanis and his colleagues were able to identify inhibatory and excitatory neurons, as well as major glial celltypes, and were able to infer expression differences between pre- and post-natal human brains. 
+    
+    
+
+    
+    
+  
+   
+  \subsubsection{Current data availability}
+  
+  \begin{landscape}
+  	\begin{table}[!htp]
+  		\centering
+  		\scriptsize
+  		\caption{Single-cell RNA-sequencing studies of the human brain}
+  		\begin{tabular}{|l|l|l|l|l|l|l|l|}
+  			\hline
+  			\textbf{Publication} & \textbf{Sample information} &\textbf{Sample Type} &\textbf{Brain Region} & \textbf{Throughput} & \textbf{Technique}  &\textbf{Data availability}& \textbf{Aim of Study} \\ \hline
+  			\cite{darmanis2015survey} & & & & & & & \\ \hline
+  			\cite{johnson2015single} & & & & & & & \\ \hline
+  			\cite{nowakowski2017spatiotemporal} & & & & & & & \\ \hline
+  			\cite{fan2018spatial} & & & & & & & \\ \hline 
+  			\cite{polioudakis2019single} & & & & & & & \\ \hline
+  			
+  		\end{tabular}
+  	\end{table}
+  \end{landscape}
+  
+ \bibliography{references.bib}
+ \bibliographystyle{apa}
+    
+    
+    \end{document}
