@@ -91,6 +91,14 @@ cell_type1 <- counts_summed %>%
   dplyr::select(matches(patterns[1]))
 
 
-zscore_celltype1 <- as.data.frame(t(scale(cell_type1))) %>% 
-  t()
-tail(zscore_celltype1)
+zscore_celltype1 <- as.data.frame(t(scale(cell_type1))) #%>% 
+  
+zscore_celltype1 <- as.data.frame(t(zscore_celltype1))
+
+head(zscore_celltype1,1)[1]
+zscore_celltype1 %<>%
+  dplyr::select(matches(as.character(ASD_ind)))
+
+head(zscore_celltype1,1)
+
+class(ASD_ind)
