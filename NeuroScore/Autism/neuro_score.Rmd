@@ -18,8 +18,6 @@ The study by Velmeshev et al (2019) analysed transcriptomic changes in the brain
 
 The study used single-nucleus RNA-sequencing strategy on postmortem tissue samples including the prefrontal cortex and anerior cingulator cortex from 15 ASD patients and 16 controls. None of the ASD patients were diagnosed with ID. Additionally, patients that only had sporadic epilespy were also included in this analysis along with 7 age matched controls.
 
-
-
 ## Characteristics of the data 
 
 * Generated 104,559 single-nuclei gene expression profiles 
@@ -42,9 +40,6 @@ The study aimed to identify differentially expressed genes in cell-type specific
 * SFARI genes were most overrepresented in L2/3 and L4 excitatory neurons, followed by VIP and somatostatin expression interneurons 
 
 Gene expression was also investigated in neuronal and glial subtypes. Over all this analysis revealed dysregulated development and synaptic signaling in components of upper-layer cortical circuitry as well as changes in the cellular state of microglia and protoplasmic astrocytes 
-
-
-
 
 # Aim of analysis
 
@@ -190,13 +185,11 @@ suppressPackageStartupMessages({
 
 ```{r meta}
 meta <- read.table("~/Documents/Data/Autism/meta.tsv", header=TRUE, sep = "\t", as.is = TRUE, row.names = 1)
-rownames(meta) <- str_replace(rownames(meta), "-", ".")
-
 ```
 
 Number of cells belonging to each cluster:
 
-```{r, fig.height=8}
+```{r, fig.height=6, fig.width=6}
 meta %>%
   group_by(cluster) %>%
   summarise(counts = n()) %>% 
@@ -206,18 +199,6 @@ meta %>%
   theme_pubclean()
 ```
 
-Number of cells belonging to each diagnosis (ASD or Control): 
-
-
-```{r}
-meta %>%
-  group_by(diagnosis) %>%
-  summarise(counts = n()) %>%
-  ggplot(aes(x = diagnosis, y = counts)) +
-  geom_bar(fill = "#0073C2FF", stat = "identity") +
-  geom_text(aes(label = counts), vjust = -0.3) +
-  theme_pubclean()
-```
 
 ### Quality control and explatory analysis of the data
 
@@ -239,39 +220,26 @@ rownames(sce) <- genes$X1
 
 ```
 
-```{r filtering}
-## filtering the genes
-keep_feature <- rowSums(counts(sce) > 0) > 0
-sce <- sce[keep_feature, ]
-```
 
 Here, we will use the `perCellQCMetrics` to calculate metrics for each cell in the data. 
 This gives us an output of the following:
 
-* Sum of counts (i.e library size)
+* Sum: the total number of counts in a cell (i.e library size)
 
-* Number of detected features 
+* Detected: number of features for the cell that have counts above the detection limit (default was used: 0)
 
-* percentage of counts in the top features
+* subsets_x_percentage: percentage of all counts that come from the control sets 
 
-Additionally, if we have given the function list of subsets, we get these quality metrics for each of those subsets as well. 
 
 In this case, it would be interesting to see the proportion of NDD genes in the dataset with respect to detection and sum. 
 
-```{r QC matrixces}
-per.cell <- perCellQCMetrics(sce,
-                             subsets=list(ASD=ASD_genes$gene.symbol,
-                                          EP_genes=factor(Epi_genes$Gene),
-                                          ID_genes=factor(ID_genes_complete$Gene)))
+```{r per Cell QC}
+per.cell <- perCellQCMetrics(sce, 
+                             subsets=list(ASD=ASD_genes$ensembl.id, 
+                                          EP_genes=factor(Epi_genes$GENEID), 
+                                          ID_genes=factor(ID_genes_complete$GENEID)))
 
 colData(sce) <- cbind(colData(sce), per.cell)
-```
-
-
-
-```{r detection}
-sce$cluster <- meta$cluster
-sce$diagnosis <- meta$diagnosis
 ```
 
 
@@ -285,10 +253,6 @@ hist(sce$detected, xlab="Number of features detected",
      xlim = c(0, 12000))
 ```
 
-```{r colData}
-plotColData(sce, x = "sum", y="detected", other_fields ="diagnosis") + facet_wrap(~diagnosis)
-```
-
 #### Proportion of NDD genes detected in this analysis 
 
 ```{r}
@@ -300,7 +264,7 @@ hist(sce$subsets_ID_genes_percent,  xlab="Proportion of ID genes (%)",
 ```
 
 ```{r}
-hist(sce$subsets_EP_genes_percent)
+hist(sce$subsets_EP_genes_percent) ### not sure why this isnt working 
 ```
 
 ### Per feature QC
@@ -311,68 +275,27 @@ hist(sce$subsets_EP_genes_percent)
 
 
 ```{r, cache = TRUE}
-#per.feat <- perFeatureQCMetrics(sce,subsets=list(ASD=ASD_genes$gene.symbol,
-  #                                               EP_genes=Epi_genes$Gene,
- #                                                ID_genes=factor(ID_genes_complete$Gen)))
+per.feat <- perFeatureQCMetrics(sce,subsets=list(ASD=ASD_genes$ensembl.id,
+                                                 EP_genes=factor(Epi_genes$GENEID),
+                                                 ID_genes=factor(ID_genes_complete$GENEID)))
 
-#rowData(sce) <- cbind(rowData(sce), per.feat)
+rowData(sce) <- cbind(rowData(sce), per.feat)
 ```
 
 Here, the scatterplot is the mean plotted aganist the detected for all cells. 
 
 ```{r}
-#plotRowData(sce, y="detected", x="mean") + scale_x_log10()
+plotRowData(sce, y="detected", x="mean") + scale_x_log10()
 ```
 
 
-```{r expression calculuations, cache=TRUE}
-ave <- calculateAverage(sce)
+
+```{r}
 sce <- logNormCounts(sce)
 cpm(sce) <- calculateCPM(sce)
 ```
 
 
-
-### Normalization 
-
-## Gene expression signature analysis 
-
-Checklist 
-
-
-* write function for z-score calculation 
-   * Must subset 1 ASD individual, all controls in 1 cell type  per gene 
-   * must group (average) expression of cells per individual 
-   * transpose and calculate z-score 
-   * End must be matrix with z-score for each cluster for each gene 
-
-
-* Plot boxplot for top 10 interesting genes (per gene list)? 
-
-
-```{r, echo=FALSE, eval=FALSE}
-## get names of all individuals that are ASD 
-#autism <- meta %>%
-#  rownames_to_column("sample_name") %>%
-#  dplyr::filter(diagnosis == "ASD") %>% 
-#  column_to_rownames("sample_name")
-
-#autism_ind <- unique(autism$individual)
-#autism_ind
-
-#ASD_4849_oligo <- meta %>% 
- # rownames_to_column("sample_name") %>% 
-  #dplyr::filter((individual == 4849 | diagnosis == "Control") & cluster == #"Oligodendrocytes") %>% 
-  #column_to_rownames("sample_name")
-
-
-#sample_names <- rownames(ASD_4849_oligo)
-#head(sample_names)
-
-#ASD_4849_oligo_mat <- dplyr::select(mat, sample_names)
-
-#head(ASD_4849_oligo_mat)[1:30]
-```
 
 
 # Notes 
