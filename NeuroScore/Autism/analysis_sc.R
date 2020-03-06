@@ -108,7 +108,7 @@ sce <- sce[keep_feature, ]
 
 ### performing analyses
 
-ASD_Ep_overlap
+
 per.cell <- perCellQCMetrics(sce, 
                              subsets=list(ASD=ASD_only, 
                                           EP_genes= factor(Epilepsy_only),
