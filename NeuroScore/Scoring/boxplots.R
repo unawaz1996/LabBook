@@ -6,8 +6,10 @@ suppressPackageStartupMessages({
 #  library(biomaRt)
   library(EnsDb.Hsapiens.v79)
   library(readxl)
+  library(reshape)
   })
 
+??melt
 
 #### Loading data 
 meta <- read.table("~/Documents/Data/Autism/meta.tsv", header=T, sep="\t", as.is=T, row.names=1)
@@ -88,12 +90,16 @@ zscores_ASD_1 <- zscores_ASD_1 %>%
   rownames_to_column("geneID") %>%
   melt()
 
-clusters <- meta$cluster
+zscores_ASD_1
 
-for (c in clusters) {
-  message("Starting for", "", c)
-zscores_ASD_1 <- zscores_ASD_1 %>%  
-  mutate(Cluster = ifelse(grepl(as.character(c), variable, ignore.case = TRUE),c, "NA"))
+patterns <- unique(sub("_.*", "", zscores_ASD_1$variable))
+head(patterns)
+
+
+
+for (celltype in clusters) {
+  message("Starting for cell type", " ", celltype)
+  zscores_ASD_1$cluster <- ifelse(grepl(celltype, zscores_ASD_1$variable, ignore.case = TRUE), as.character(celltype), NA)
 }
 
 zscores_ASD_1$cluster <- ifelse(grepl("AST.FB", zscores_ASD_1$variable, ignore.case = TRUE), "AST-FB", ## AST-FB

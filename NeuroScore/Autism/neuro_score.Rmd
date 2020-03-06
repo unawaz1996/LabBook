@@ -6,6 +6,7 @@ output:
   html_document:
     code_folding: hide
     toc: true
+    toc_float: true 
     theme: lumen
 ---
 
@@ -111,28 +112,28 @@ The ASD risk genes from SFARI are scored from 1 to 3, where 1 is high confidence
 
 * **Intellectual disability genes**
 
+The ID gene list was download from UMC 
 
 ```{r ID gene}
-ID_genes <- read.xls("~/Documents/Lists/ID_Speech_delay_genes.xls") %>% 
-  as.data.frame() %>%
-  column_to_rownames("Gene")
-geneSymbols <- as.character(rownames(ID_genes))
+ID_genes <- read.xls("~/Documents/Lists/NDD_genes.xlsx", sheet = "UMC ID", header= FALSE) %>% 
+  as.data.frame() %>% 
+  dplyr::select(V1)
+
+
+geneSymbols <- as.character(ID_genes$V1)
 geneIDs <- ensembldb::select(EnsDb.Hsapiens.v79, keys= geneSymbols, keytype = "SYMBOL", columns = c("SYMBOL","GENEID"))
-ID_genes_complete <- merge(as.data.frame(ID_genes), 
-                           as.data.frame(geneIDs), by.x = "row.names",
-                           by.y = "SYMBOL", sort=FALSE)
+ID_genes <- merge(as.data.frame(ID_genes), 
+                  as.data.frame(geneIDs), by.x = "V1",
+                  by.y = "SYMBOL", sort=FALSE)
 
-ID_genes_complete %>% 
-  dplyr::select("Gene" = "Row.names", "GENEID","Phenotype") %>%
-  kable(escape = F, align = "c") %>%
-  kable_styling(c("striped", "condensed"), full_width = F) %>%
-  kable_styling(bootstrap_options = "striped", full_width = F) %>%
-  scroll_box(width = "1000px", height = "200px")
 
+ID_genes %<>% 
+  dplyr::select("Gene" = "V1", "GENEID") %>% dplyr::filter(str_detect(GENEID, "ENSG"))
 ```
 
    * **Epilpsy genes**
    
+   The Epilepsy genes have been curated in house after an in-depth literature review. 
 ```{r}
 Epi_genes <- read.xls("~/Documents/Lists/Final_Epil_list_annotated_Jan19.xls")  %>% 
   as.data.frame() 
@@ -154,7 +155,7 @@ Epi_genes_complete %>%
   
 ```
 
-The ID and Epilpsy genes have been curated in-house after an in-depth literature analysis.
+
 
 There are overlapping genes for each category, however for the purpose of this analysis, we will keep the groups as they are.
 

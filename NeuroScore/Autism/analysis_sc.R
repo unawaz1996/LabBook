@@ -6,24 +6,21 @@ suppressPackageStartupMessages({
   library(here) # CRAN
   library(DT) # CRAN
   library(pheatmap) # CRAN
-  library(Seurat)
   library(data.table)
   library(tibble)
   library(Matrix)
   library(scran)  
   library(gdata)
   library(biomaRt)
+  library(RColorBrewer)
+  library(VennDiagram)
   library(EnsDb.Hsapiens.v79)})
 
-
-### ANALYSIS using R 
 
 ### gene lists 
 
 ### ASD genes 
-ASD_genes <- read.csv("~/Documents/Lists/SFARI-Gene_genes_01-03-2020release_02-06-2020export.csv")
-
-ASD_genes <- ASD_genes %>%
+ASD_genes <- read.csv("~/Documents/Lists/SFARI-Gene_genes_01-03-2020release_02-06-2020export.csv") %>%
   dplyr::select("gene.symbol", "gene.name", "ensembl.id", 
                 "chromosome", "gene.score", "number.of.reports") 
 
@@ -35,11 +32,11 @@ ID_genes <- read.xls("~/Documents/Lists/ID_Speech_delay_genes.xls") %>%
   column_to_rownames("Gene")
 geneSymbols <- as.character(rownames(ID_genes))
 geneIDs <- ensembldb::select(EnsDb.Hsapiens.v79, keys= geneSymbols, keytype = "SYMBOL", columns = c("SYMBOL","GENEID"))
-ID_genes_complete <- merge(as.data.frame(ID_genes), 
+ID_genes <- merge(as.data.frame(ID_genes), 
                            as.data.frame(geneIDs), by.x = "row.names",
                            by.y = "SYMBOL", sort=FALSE)
 
-ID_genes_complete <- ID_genes_complete %>% 
+ID_genes %<>% 
   dplyr::select("Gene" = "Row.names", "GENEID","Phenotype")
 
 #### Ep genes
@@ -49,23 +46,43 @@ Epi_genes <- read.xls("~/Documents/Lists/Final_Epil_list_annotated_Jan19.xls")  
 
 geneSymbols <- as.character(Epi_genes$old.list)
 geneIDs <- ensembldb::select(EnsDb.Hsapiens.v79, keys= geneSymbols, keytype = "SYMBOL", columns = c("SYMBOL","GENEID"))
-
-Epi_genes_complete <- merge(as.data.frame(Epi_genes), 
+Epi_genes <- merge(as.data.frame(Epi_genes), 
                             as.data.frame(geneIDs), by.x = "old.list",
                             by.y = "SYMBOL", sort=FALSE)
 
 
-Epi_genes <- Epi_genes_complete %>% 
-  as.data.frame() %>%
+Epi_genes %<>% as.data.frame() %>%
   dplyr::select("Gene" = "old.list", "GENEID", "Type") %>%
   dplyr::filter(str_detect(GENEID, "ENSG"))
 
-Epi_genes$GENEID
 
 
 
-factor(Epi_genes$GENEID)
+## Venn diagram and see overlap
+myCol <- brewer.pal(3, "Pastel2")
+venn.diagram <- venn.diagram(x=list("ASD" = ASD_genes$ensembl.id, 
+                                    "Epilepsy" = Epi_genes$GENEID, 
+                                    "Intellectual disability" = ID_genes$GENEID), 
+                             filename = NULL, lwd = 1, fill = myCol)
 
+grid.newpage()
+grid.draw(venn.diagram)
+
+
+### HOUSE-KEEPING genes
+
+HKG <- read.table("~/Documents/Lists/HK_genes.txt", header=FALSE) %>% 
+ dplyr::select(V1)
+
+length(unique(HKG$V1))
+
+
+###################################################################################
+###################################################################################
+
+# ANALYSIS
+
+## single-nucleus dataset
 ## write function that is automatically able to take a path and is able to create a SCE
 meta <- read.table("~/Documents/Data/Autism/meta.tsv", header=T, sep="\t", as.is=T, row.names=1)
 #rownames(meta) <- str_replace(rownames(meta), "-", ".")
@@ -88,17 +105,20 @@ sce$cluster <- meta$cluster
 keep_feature <- rowSums(counts(sce) > 0) > 0
 sce <- sce[keep_feature, ]
 
-subset(sce, cluster="Oligodendrocytes")
-
-
-
 
 ### performing analyses
 
+ASD_Ep_overlap
 per.cell <- perCellQCMetrics(sce, 
-                             subsets=list(ASD=ASD_genes$ensembl.id, 
-                                          EP_genes=factor(Epi_genes$GENEID), 
-                                          ID_genes=factor(ID_genes_complete$GENEID)))
+                             subsets=list(ASD=ASD_only, 
+                                          EP_genes= factor(Epilepsy_only),
+                                          ID_genes= factor(ID_only), 
+                                          ASD_EP = factor(ASD_Ep_overlap), 
+                                          ASD_ID = factor(ASD_ID_overlap), 
+                                          ID_Ep = factor(ID_Ep_overlap), 
+                                          All = factor(all_overlap), 
+                                          HKG = factor(HKG$V1)))
+
 
 colData(sce) <- cbind(colData(sce), per.cell)
 
